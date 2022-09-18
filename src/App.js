@@ -97,12 +97,13 @@ function App() {
 
     const injector = await web3FromAddress(account);
     console.log(injector);
+    console.log({ userAddress, amount });
     const api = await getApi();
     const contract = await getContract();
     const gasLimit = 3000n * 1000000n;
     const tokenBalance = await contract.tx["psp22::transfer"](
       { gasLimit: -1, storageDepositLimit },
-      "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
+      userAddress,
       amount,
       1000
     ).signAndSend(account, { signer: injector.signer }, (result) => {
@@ -117,6 +118,10 @@ function App() {
 
   return (
     <div className="App">
+      {/* <nav>
+        {" "}
+        <button>Connect</button>
+      </nav> */}
       <h1 className="text-3xl font-bold underline">PSP22 Contract</h1>
       <div className="mb-8">
         {error && <div>{error}</div>}
@@ -126,24 +131,31 @@ function App() {
         <h3>My PSP22 token balance: {tokenBalance}</h3>
       </div>
       <div className=" flex justify-center ">
-        <div className="flex flex-col">
+        <div className="flex flex-col w-1/2 ">
+          <label>Recipeint Address</label>
           <input
             type="text"
             value={userAddress}
             name="userAddress"
             onChange={(e) => setUserAddress(e.target.value)}
-            className="border-solid border-indigo-600 mb-2"
+            className="border-solid border-gray-400  mb-8 w-full p-4 h-10 rounded-md"
             placeholder="Enter address"
           />
+          <label>Token Amount</label>
           <input
             type="number"
             value={amount}
             name="amount"
             onChange={(e) => setAmount(e.target.value)}
-            className="border-solid border-indigo-600 mb-2"
+            className="border-solid border-gray-400 p-4 mb-8 w-full h-10 rounded-md"
             placeholder="Enter amount"
           />
-          <button onClick={sendToken}>SendToken</button>
+          <button
+            className="rounded-md h-10 text-white bg-sky-500"
+            onClick={sendToken}
+          >
+            SendToken
+          </button>
         </div>
       </div>
     </div>
