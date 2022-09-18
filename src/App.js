@@ -20,7 +20,7 @@ function App() {
   const [amount, setAmount] = useState("");
 
   useEffect(() => {
-    extensionSetup();
+    // extensionSetup();
   }, []);
 
   const getContract = async () => {
@@ -118,17 +118,31 @@ function App() {
 
   return (
     <div className="App">
-      {/* <nav>
-        {" "}
-        <button>Connect</button>
-      </nav> */}
+      <nav className="h-10 p-2 mb-10 flex  justify-end pr-10">
+        {account ? (
+          account
+        ) : (
+          <button
+            onClick={extensionSetup}
+            className="rounded-md h-10 text-white bg-sky-500 p-2"
+          >
+            CONNECT WALLET
+          </button>
+        )}
+      </nav>
       <h1 className="text-3xl font-bold underline">PSP22 Contract</h1>
       <div className="mb-8">
         {error && <div>{error}</div>}
-        <div> Address: {account}</div>
-        <h3>Balance: {balance}</h3>
-        <h3>Token total Supply: {totalSupply}</h3>
-        <h3>My PSP22 token balance: {tokenBalance}</h3>
+        {!account ? (
+          <p className="text-2xl font-extrabold">PLEASE CONNECT WALLET</p>
+        ) : (
+          <div>
+            <div> Address: {account}</div>
+            <h3>Balance: {balance}</h3>
+            <h3>Token total Supply: {totalSupply}</h3>
+            <h3>My PSP22 token balance: {tokenBalance}</h3>
+          </div>
+        )}
       </div>
       <div className=" flex justify-center ">
         <div className="flex flex-col w-1/2 ">
