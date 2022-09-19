@@ -27,7 +27,6 @@ function App() {
     const api = await getApi();
     const address = "5C998W4aUKKb2BZVhM7Z6CW5vNkxrUYtZUskKkuVmCBjNSe8";
     const contract = new ContractPromise(api, metadata, address);
-    console.log(contract);
     return contract;
   };
 
@@ -67,7 +66,6 @@ function App() {
       { gasLimit: -1 },
       accounts[0].address
     );
-    console.log(tokenBalance.output.toHuman());
     setTokenBalance(tokenBalance.output.toHuman());
   };
 
