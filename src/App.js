@@ -20,7 +20,7 @@ function App() {
   const [amount, setAmount] = useState("");
 
   useEffect(() => {
-    // extensionSetup();
+    extensionSetup();
   }, []);
 
   const getContract = async () => {
@@ -56,7 +56,6 @@ function App() {
     setBalance(free.toString());
     console.log(free);
     const contract = await getContract();
-    console.log(contract);
     const callValue = await contract.query.getTotalSupply(
       "5C998W4aUKKb2BZVhM7Z6CW5vNkxrUYtZUskKkuVmCBjNSe8",
       { gasLimit: -1 }
@@ -78,21 +77,26 @@ function App() {
     return api;
   };
 
-  const signAndSend = async () => {
-    const injector = await web3FromAddress(account);
-    console.log(injector);
-    // Construct
-    const api = await getApi();
-    const txHash = await api.tx.balances
-      .transfer("5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty", 12345)
-      .signAndSend(account, { signer: injector.signer });
-
-    // Show the hash
-    console.log(`Submitted with hash ${txHash}`);
+  const checkConnection = async () => {
+    const extension = await web3Enable("psp22-frontend");
+    if (extension?.length === 0) {
+      if (isWeb3Injected()) {
+        setError("Please install wallet");
+        return;
+      }
+      setError("Error connecting to wallet");
+      return;
+    }
+    const accounts = await web3Accounts();
+    setAccount(accounts[0].address);
   };
-
   const sendToken = async () => {
-    const value = 10000; // only for payable messages, call will fail otherwise
+    setError("");
+    if (!amount || !userAddress) {
+      setError("Please fill all values");
+      return;
+    }
+    const value = 10000;
     const storageDepositLimit = 1000;
 
     const injector = await web3FromAddress(account);
@@ -105,15 +109,15 @@ function App() {
       { gasLimit: -1, storageDepositLimit },
       userAddress,
       amount,
-      1000
+      1000 // this data argument is hardcoded because an error is thrown without it.
     ).signAndSend(account, { signer: injector.signer }, (result) => {
       if (result.status.isInBlock) {
         console.log("in a block");
+        window.location.reload();
       } else if (result.status.isFinalized) {
         console.log("finalized");
       }
     });
-    console.log("done");
   };
 
   return (
@@ -132,15 +136,15 @@ function App() {
       </nav>
       <h1 className="text-3xl font-bold underline">PSP22 Contract</h1>
       <div className="mb-8">
-        {error && <div>{error}</div>}
+        {error && <div className="text-red-400">{error}</div>}
         {!account ? (
           <p className="text-2xl font-extrabold">PLEASE CONNECT WALLET</p>
         ) : (
           <div>
             <div> Address: {account}</div>
-            <h3>Balance: {balance}</h3>
-            <h3>Token total Supply: {totalSupply}</h3>
-            <h3>My PSP22 token balance: {tokenBalance}</h3>
+            <h3 className="text-sm pb-6">Balance: {balance}</h3>
+            <h3 className="text-2xl">P2P Token total Supply: {totalSupply}</h3>
+            <h3 className="text-2xl">My PSP22 token balance: {tokenBalance}</h3>
           </div>
         )}
       </div>
