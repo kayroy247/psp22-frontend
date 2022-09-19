@@ -90,7 +90,8 @@ function App() {
     const accounts = await web3Accounts();
     setAccount(accounts[0].address);
   };
-  const sendToken = async () => {
+  const sendToken = async (e) => {
+    e.preventDefault();
     setError("");
     if (!amount || !userAddress) {
       setError("Please fill all values");
@@ -134,7 +135,7 @@ function App() {
           </button>
         )}
       </nav>
-      <h1 className="text-3xl font-bold underline">PSP22 Contract</h1>
+      <h1 className="text-3xl font-bold underline mb-4">Send PSP22 Token</h1>
       <div className="mb-8">
         {error && <div className="text-red-400">{error}</div>}
         {!account ? (
